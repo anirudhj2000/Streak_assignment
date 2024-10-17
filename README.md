@@ -40,3 +40,8 @@ A simple full-stack application where users can interact with a 20x20 grid to se
    npm i
    npm run dev
    ```
+
+#### Demo Video
+
+https://github.com/user-attachments/assets/d1afb6db-a2de-438f-a398-44f237fc1864
+
