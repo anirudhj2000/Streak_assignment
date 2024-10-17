@@ -12,12 +12,10 @@ A simple full-stack application where users can interact with a 20x20 grid to se
 
 ## Setup Instructions
 
-### 1. Backend Setup (Go)
-
 #### Prerequisites
 
-- Go 1.18 or later. Install from [here](https://golang.org/dl/).
-- Nodejs
+- Go 
+- Node
 
 #### Steps
 
