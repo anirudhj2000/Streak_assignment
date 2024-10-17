@@ -4,28 +4,10 @@ import Grid from "./Grid";
 import { PointInterface } from "@/utils/types";
 import GridCell from "./GridCell";
 
-const testPath = [
-  { x: 0, y: 0 },
-  { x: 1, y: 0 },
-  { x: 2, y: 0 },
-  { x: 3, y: 0 },
-  { x: 4, y: 0 },
-  { x: 5, y: 0 },
-  { x: 6, y: 0 },
-  { x: 7, y: 0 },
-  { x: 8, y: 0 },
-  { x: 9, y: 0 },
-  { x: 10, y: 0 },
-  { x: 11, y: 0 },
-  { x: 12, y: 0 },
-  { x: 13, y: 0 },
-  { x: 14, y: 0 },
-];
-
 const PathFinder = () => {
   const [startPoint, setStartPoint] = useState<PointInterface | null>(null);
   const [endPoint, setEndPoint] = useState<PointInterface | null>(null);
-  const [path, setPath] = useState<PointInterface[]>(testPath);
+  const [path, setPath] = useState<Array<PointInterface>>([]);
 
   const handleCellClick = (x: number, y: number) => {
     console.log(x, y);
@@ -37,6 +19,31 @@ const PathFinder = () => {
       setStartPoint({ x, y });
     } else if (endPoint === null) {
       setEndPoint({ x, y });
+    }
+  };
+
+  //   we can also add the URL to the .env file and use axios to setup a complete API interface, I have added here due to time crunch
+  const findPath = () => {
+    if (startPoint && endPoint) {
+      fetch("http://localhost:8080" + "/api/find-path", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ start: startPoint, end: endPoint }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.path.length === 0) {
+            alert("No path found");
+            return;
+          }
+          let arr = data.path.map((item: any) => {
+            return { x: item[0], y: item[1] };
+          });
+          setPath(arr);
+          console.log(data.path);
+        });
     }
   };
 
@@ -107,8 +114,7 @@ const PathFinder = () => {
                 : "bg-black border-black cursor-pointer"
             } `}
             onClick={() => {
-              console.log("startPoint", startPoint);
-              console.log("endPoint", endPoint);
+              findPath();
             }}
           >
             Find Path
@@ -116,15 +122,30 @@ const PathFinder = () => {
         </div>
 
         {path.length > 0 ? (
-          <div className="flex flex-col items-start justify-center mt-8 text-start">
+          <div className="flex flex-col items-center w-full max-h-[40vh] overflow-y-scroll justify-start mt-8  text-start">
             <h2 className="text-xl font-bold">Path</h2>
-            <ol className=" list-decimal ml-4">
-              {path.map((point, index) => (
-                <li key={index}>
-                  X : {point.x}, Y : {point.y}
-                </li>
-              ))}
-            </ol>
+            <div className=" grid grid-cols-6 gap-4 mt-2">
+              {path.map((point, index) => {
+                return (
+                  <div
+                    key={index}
+                    className=" flex flex-col items-center justify-center"
+                  >
+                    <p className=" text-center text-[10px]">Step {index + 1}</p>
+                    <GridCell
+                      key={point.x + point.y}
+                      x={point.x}
+                      y={point.y}
+                      selected={true}
+                      active={true}
+                      onClick={function (): void {
+                        throw new Error("Function not implemented.");
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
           </div>
         ) : null}
 
